@@ -23,7 +23,7 @@ export const NavBar: React.FC<NavBarProps> = ({
               : "text-gray-600 hover:bg-gray-100"
           }`}
         >
-          <Star size={24} />
+          <MapIcon size={24} />
         </button>
       </div>
       <div className="mt-auto p-4">

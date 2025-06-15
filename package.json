@@ -12,6 +12,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
+    "axios": "^1.10.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.515.0",
     "maplibre-gl": "^5.5.0",
