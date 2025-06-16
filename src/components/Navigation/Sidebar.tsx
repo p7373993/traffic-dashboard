@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search, Heart } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { RoadSegment } from "../../types/global.types";
 import { DateTimePicker } from "../common/DateTimePicker";
 import { MiniChart } from "../TrafficAnalysis/MiniChart";
@@ -46,7 +46,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   // 날짜 범위 선택 핸들러
   const handleDateRangeSelect = (startDate: Date, endDate: Date) => {
-    console.log("Selected date range:", startDate, "to", endDate);
     setCurrentDate(startDate);
     setIsCalendarOpen(false);
   };
@@ -75,14 +74,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   // 헤더 제목 결정
   const getHeaderTitle = () => {
     if (activeNav === "favorites") {
-      return "Favorite Roads";
+      return "Favorites";
     }
     return "Traffic Analysis Section";
   };
 
   return (
     <aside className="w-[400px] bg-white flex flex-col border-r border-gray-200 z-10">
-      <header className="p-4 border-b border-gray-200 space-y-4">
+      <header className="px-6 py-5 border-b border-gray-200 space-y-4">
         <div className="relative">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -104,16 +103,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </p>
           <button
             onClick={() => setIsCalendarOpen(true)}
-            className="text-xs bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-full hover:bg-gray-300"
+            style={{
+              borderRadius: "11px",
+              border: "1px solid rgba(0,0,0,0.09)",
+              background: "rgba(236,236,236,0.51)",
+              color: "#939393",
+              fontWeight: 500,
+              fontSize: "12px",
+              padding: "4px 14px",
+              flexShrink: 0,
+            }}
           >
             Custom Settings
           </button>
         </div>
         {activeNav === "map" && (
-          <DateTimePicker
-            currentDate={currentDate}
-            setCurrentDate={setCurrentDate}
-          />
+          <div className="flex justify-center">
+            <DateTimePicker
+              currentDate={currentDate}
+              setCurrentDate={setCurrentDate}
+            />
+          </div>
         )}
       </header>
 
@@ -133,10 +143,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="text-center py-8 text-gray-500">
             {activeNav === "favorites" ? (
               <div>
-                <Heart className="mx-auto mb-2 text-gray-300" size={32} />
-                <p className="text-sm">No favorite roads yet</p>
+                <Star className="mx-auto mb-2 text-gray-300" size={32} />
+                <p className="text-sm">No favorites yet</p>
                 <p className="text-xs mt-1">
-                  Click the heart icon to add favorites
+                  Click the star icon to add favorites
                 </p>
               </div>
             ) : (
@@ -170,6 +180,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <span className="text-xs text-gray-500">
                         {segment.area}
                       </span>
+                      <button
+                        style={{
+                          display: "inline-flex",
+                          padding: "4px 14px",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexShrink: 0,
+                          borderRadius: "11px",
+                          border: "1px solid rgba(0,0,0,0.09)",
+                          background: "rgba(236,236,236,0.51)",
+                          color: "#939393",
+                          fontWeight: 500,
+                          fontSize: "12px",
+                        }}
+                      >
+                        View Details
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -177,9 +204,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => onSegmentClick(segment)}
                   className="cursor-pointer"
                 >
-                  <p className="text-xs text-gray-600 mb-2">
-                    {segment.length}km
-                  </p>
+                  {/* Divider line */}
+                  <hr className="border-gray-200 mb-4" />
                   <MiniChart
                     data={trafficData}
                     dataKey="volume"

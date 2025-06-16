@@ -52,7 +52,6 @@ export const GoogleMap = memo<GoogleMapProps>(
         });
 
         googleMapRef.current = map;
-        console.log("Map initialized successfully");
 
         // 도로 구간 폴리라인 생성
         roadSegments.forEach((segment) => {
@@ -70,7 +69,6 @@ export const GoogleMap = memo<GoogleMapProps>(
 
           // 클릭 이벤트
           polyline.addListener("click", () => {
-            console.log("Polyline clicked:", segment.name);
             onSegmentClick(segment);
           });
         });
@@ -94,11 +92,8 @@ export const GoogleMap = memo<GoogleMapProps>(
     useEffect(() => {
       // Google Maps 스크립트가 이미 로드되었는지 확인
       if (window.google && window.google.maps) {
-        console.log("Google Maps already loaded");
         initializeMap();
       } else {
-        console.log("Loading Google Maps script...");
-
         // 기존 스크립트 태그가 있는지 확인
         const existingScript = document.querySelector(
           'script[src*="maps.googleapis.com"]'
@@ -115,7 +110,6 @@ export const GoogleMap = memo<GoogleMapProps>(
 
         // 전역 콜백 함수 설정
         window.initMap = () => {
-          console.log("Google Maps loaded via callback");
           initializeMap();
         };
 

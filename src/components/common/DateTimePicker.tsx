@@ -61,62 +61,123 @@ export const DateTimePicker = memo<DateTimePickerProps>(
     };
 
     return (
-      <div className="flex items-center justify-between border border-gray-300 rounded-md p-1 bg-white text-sm">
-        <div className="flex items-center justify-center flex-1">
-          <button
-            onClick={() => changeDate(-1)}
-            className="p-1.5 hover:bg-gray-100 rounded-md"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <span className="font-semibold w-20 text-center">
-            {isToday
-              ? "Today"
-              : currentDate.toLocaleDateString("ko-KR", {
-                  month: "2-digit",
-                  day: "2-digit",
-                })}
-          </span>
-          <button
-            onClick={() => changeDate(1)}
-            className="p-1.5 hover:bg-gray-100 rounded-md"
-          >
-            <ChevronRight size={20} />
-          </button>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "40px",
+          padding: 0,
+          background: "#FFF",
+          alignItems: "flex-start",
+          gap: "0px",
+          flexShrink: 0,
+        }}
+      >
+        {/* 날짜 */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            borderTop: "1px solid #EDEDED",
+            borderBottom: "1px solid #EDEDED",
+            background: "#FFF",
+            width: "33.33%",
+            height: "40px",
+            flexShrink: 0,
+          }}
+        >
+          <div className="flex items-center justify-center w-full h-full gap-1">
+            <button
+              onClick={() => changeDate(-1)}
+              className="px-1 text-gray-500 hover:text-blue-600"
+            >
+              &#60;
+            </button>
+            <span className="mx-2 font-semibold">
+              {isToday
+                ? "Today"
+                : currentDate.toLocaleDateString("ko-KR", {
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+            </span>
+            <button
+              onClick={() => changeDate(1)}
+              className="px-1 text-gray-500 hover:text-blue-600"
+            >
+              &#62;
+            </button>
+          </div>
         </div>
-        <div className="flex items-center justify-center flex-1 border-l border-r border-gray-300">
-          <button
-            onClick={() => changeHour(-1)}
-            className="p-1.5 hover:bg-gray-100 rounded-md"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <span className="font-semibold w-12 text-center">
-            {formatHour(currentDate)}
-          </span>
-          <button
-            onClick={() => changeHour(1)}
-            className="p-1.5 hover:bg-gray-100 rounded-md"
-          >
-            <ChevronRight size={20} />
-          </button>
+        {/* 시 */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            borderTop: "1px solid #EDEDED",
+            borderBottom: "1px solid #EDEDED",
+            borderLeft: "1px solid #EDEDED",
+            background: "#FFF",
+            width: "33.33%",
+            height: "40px",
+            flexShrink: 0,
+          }}
+        >
+          <div className="flex items-center justify-center w-full h-full gap-1">
+            <button
+              onClick={() => changeHour(-1)}
+              className="px-1 text-gray-500 hover:text-blue-600"
+            >
+              &#60;
+            </button>
+            <span className="mx-2 font-semibold">
+              {formatHour(currentDate)}
+            </span>
+            <button
+              onClick={() => changeHour(1)}
+              className="px-1 text-gray-500 hover:text-blue-600"
+            >
+              &#62;
+            </button>
+          </div>
         </div>
-        <div className="flex items-center justify-center flex-1">
-          <button
-            onClick={() => changeMinute(-5)}
-            className="p-1.5 hover:bg-gray-100 rounded-md"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <span className="font-semibold w-12 text-center">
-            {formatMinute(currentDate)}
-          </span>
-          <button
-            onClick={() => changeMinute(5)}
-            className="p-1.5 hover:bg-gray-100 rounded-md"
-          >
-            <ChevronRight size={20} />
-          </button>
+        {/* 분 */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            borderTop: "1px solid #EDEDED",
+            borderBottom: "1px solid #EDEDED",
+            borderLeft: "1px solid #EDEDED",
+            background: "#FFF",
+            width: "33.33%",
+            height: "40px",
+            flexShrink: 0,
+          }}
+        >
+          <div className="flex items-center justify-center w-full h-full gap-1">
+            <button
+              onClick={() => changeMinute(-5)}
+              className="px-1 text-gray-500 hover:text-blue-600"
+            >
+              &#60;
+            </button>
+            <span className="mx-2 font-semibold">
+              {formatMinute(currentDate)}
+            </span>
+            <button
+              onClick={() => changeMinute(5)}
+              className="px-1 text-gray-500 hover:text-blue-600"
+            >
+              &#62;
+            </button>
+          </div>
         </div>
       </div>
     );
