@@ -25,6 +25,12 @@ export const NavBar: React.FC<NavBarProps> = ({
         >
           <MapIcon size={24} />
         </button>
+        <button className={`p-3 rounded-lg transition-colors`}>
+          <FileText size={24} />
+        </button>
+        <button className={`p-3 rounded-lg transition-colors`}>
+          <Star size={24} />
+        </button>
       </div>
       <div className="mt-auto p-4">
         <button className="p-2 rounded-full bg-gray-200 text-gray-600">

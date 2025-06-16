@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Search } from "lucide-react";
 import { RoadSegment } from "../../types/global.types";
 import { DateTimePicker } from "../common/DateTimePicker";
 import { MiniChart } from "../TrafficAnalysis/MiniChart";
 import { generateTrafficData } from "../../utils/trafficDataGenerator";
+import CalendarModal from "../common/CalendarModal";
 
 interface SidebarProps {
   selectedSegment: RoadSegment | null;
@@ -24,6 +25,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setSearchTerm,
   roadSegments,
 }) => {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
   const formatFullDate = (date: Date) => {
     const yyyy = date.getFullYear();
     const mm = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -33,6 +36,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       .toString()
       .padStart(2, "0");
     return `${yyyy} ${mm} ${dd} ${hh}:${min}`;
+  };
+
+  // 날짜 범위 선택 핸들러
+  const handleDateRangeSelect = (startDate: Date, endDate: Date) => {
+    console.log("Selected date range:", startDate, "to", endDate);
+    setCurrentDate(startDate);
+    setIsCalendarOpen(false);
   };
 
   const filteredSegments = roadSegments.filter(
@@ -61,7 +71,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <p className="text-lg font-bold text-blue-600 tracking-wide">
             {formatFullDate(currentDate)}
           </p>
-          <button className="text-xs bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-full hover:bg-gray-300">
+          <button
+            onClick={() => setIsCalendarOpen(true)}
+            className="text-xs bg-gray-200 text-gray-700 font-semibold px-3 py-1.5 rounded-full hover:bg-gray-300"
+          >
             Custom Settings
           </button>
         </div>
@@ -72,7 +85,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-        <h3 className="text-sm font-bold text-gray-500 px-2">교통 분석 구간</h3>
+        <h3 className="text-sm font-bold text-gray-500 px-2">
+          Traffic Analysis Section
+        </h3>
         {filteredSegments.map((segment) => {
           const trafficData = generateTrafficData(segment.id);
           const isSelected = selectedSegment?.id === segment.id;
@@ -102,6 +117,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
       </div>
+      <CalendarModal
+        isOpen={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        onDateRangeSelect={handleDateRangeSelect}
+      />
     </aside>
   );
 };
