@@ -3,10 +3,9 @@ import { NavBar } from "../Navigation/NavBar";
 import { Sidebar } from "../Navigation/Sidebar";
 import { GoogleMap } from "../Map/GoogleMap";
 import { DetailPanel } from "../TrafficAnalysis/DetailPanel";
-import { ReportModal } from "../Reports/ReportModal";
 import { roadSegments } from "../../data/roadSegments";
 import { RoadSegment } from "../../types/global.types";
-import { Map as MapIcon, X, Heart } from "lucide-react";
+import { Map as MapIcon, Star } from "lucide-react";
 import "./Dashboard.styles.css";
 
 export default function Dashboard() {
@@ -56,13 +55,10 @@ export default function Dashboard() {
     setSearchTerm("");
   }, []);
 
+  const [isDetailPanelFullscreen, setIsDetailPanelFullscreen] = useState(false); // 상세 패널
   return (
     <div className="h-screen w-full bg-gray-100 flex font-sans text-gray-800">
-      <NavBar
-        activeNav={activeNav}
-        setActiveNav={handleNavChange}
-        onReportClick={() => setIsReportModalOpen(true)}
-      />
+      <NavBar activeNav={activeNav} setActiveNav={handleNavChange} />
 
       <Sidebar
         selectedSegment={selectedSegment}
@@ -80,7 +76,6 @@ export default function Dashboard() {
       <main className="flex-1 relative bg-gray-100">
         {activeNav === "map" || activeNav === "favorites" ? (
           <>
-            {/* 지도 뷰 - 맵 모드와 즐겨찾기 모드 모두에서 표시 */}
             <div className="absolute inset-0">
               <GoogleMap
                 selectedSegment={selectedSegment}
@@ -91,7 +86,7 @@ export default function Dashboard() {
             {/* 즐겨찾기 모드일 때 추가 오버레이 */}
             {activeNav === "favorites" && !selectedSegment && (
               <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-4 flex items-center space-x-3 z-10">
-                <Heart size={24} className="text-red-500" />
+                <Star size={24} className="text-red-500" />
                 <div className="text-sm">
                   <p className="font-semibold text-gray-700">Favorites Mode</p>
                   <p className="text-gray-600">
@@ -123,26 +118,43 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* 상세 패널 - 모든 모드에서 공통 */}
         {selectedSegment && (
-          <div className="fixed top-0 right-0 w-1/3 h-full bg-white shadow-2xl border-l border-gray-200 animate-slideInRight z-50">
+          <div
+            className={`fixed top-0 h-full animate-slideInRight z-50 ${
+              isDetailPanelFullscreen ? "inset-0" : "right-0"
+            }`}
+            style={
+              isDetailPanelFullscreen
+                ? {
+                    background: "white",
+                    zIndex: 60,
+                  }
+                : {
+                    width: "823px",
+                    height: "1080px",
+                    borderRight: "1px solid #ECECEC",
+                    background: "rgba(255, 255, 255, 0.90)",
+                    boxShadow: "0px 4px 12.8px 0px rgba(0, 0, 0, 0.30)",
+                    backdropFilter: "blur(5px)",
+                    flexShrink: 0,
+                  }
+            }
+          >
             <div className="h-full overflow-y-auto">
               <DetailPanel
                 segment={selectedSegment}
                 favoriteSegments={favoriteSegments}
                 onToggleFavorite={handleToggleFavorite}
                 onClose={() => setSelectedSegment(null)}
+                isFullscreen={isDetailPanelFullscreen}
+                onToggleFullscreen={() =>
+                  setIsDetailPanelFullscreen(!isDetailPanelFullscreen)
+                }
               />
             </div>
           </div>
         )}
       </main>
-
-      <ReportModal
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-        comparisonSegments={roadSegments}
-      />
     </div>
   );
 }
