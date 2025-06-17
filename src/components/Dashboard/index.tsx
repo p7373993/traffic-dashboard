@@ -86,10 +86,10 @@ export default function Dashboard() {
                   <p className="font-semibold text-gray-700">Favorites Mode</p>
                   <p className="text-gray-600">
                     {favoriteSegments.length > 0
-                      ? `${favoriteSegments.length} favorite road${
+                      ? `${favoriteSegments.length} favorite${
                           favoriteSegments.length > 1 ? "s" : ""
                         } available in sidebar`
-                      : "No favorite roads selected yet"}
+                      : "No favorites selected yet"}
                   </p>
                 </div>
               </div>
@@ -151,7 +151,6 @@ export default function Dashboard() {
                   backdropFilter: "blur(5px)",
                   width: "17px",
                   height: "51px",
-                  flexShrink: 0,
                   boxShadow: "0 4px 24px 0 rgba(0,0,0,0.10)",
                 }}
               >
@@ -159,46 +158,35 @@ export default function Dashboard() {
               </button>
             )}
             <div
-              className="fixed top-0 right-0 h-full z-50 transition-all duration-300 ease-in-out"
-              style={
+              className={`fixed top-0 h-full z-50 ${
                 isDetailPanelFullscreen
-                  ? {
-                      left: 0,
-                      width: "100vw",
-                      background: "white",
-                      zIndex: 60,
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
-                    }
-                  : {
-                      width: "min(823px, 90vw)",
-                      right: 0,
-                      left: "unset",
-                      position: "fixed",
-                      aspectRatio: "823/1080",
-                      borderRight: "1px solid #ECECEC",
-                      background: "rgba(255, 255, 255, 0.90)",
-                      boxShadow: "0px 4px 12.8px 0px rgba(0, 0, 0, 0.30)",
-                      backdropFilter: "blur(5px)",
-                      flexShrink: 0,
-                      height: "100%",
-                      transition: "all 0.35s cubic-bezier(0.4,0,0.2,1)",
-                    }
-              }
+                  ? "left-0 w-screen"
+                  : "right-0 w-[min(823px,90vw)]"
+              }`}
+              style={{
+                background: isDetailPanelFullscreen ? "white" : "rgba(255, 255, 255, 0.90)",
+                boxShadow: "0px 4px 12.8px 0px rgba(0, 0, 0, 0.30)",
+                backdropFilter: "blur(5px)",
+                borderRight: "1px solid #ECECEC",
+                zIndex: 60,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               <div
-                className="h-full overflow-y-auto relative"
+                className="h-full overflow-y-auto relative flex justify-center"
                 style={{ width: "100%" }}
               >
-                <DetailPanel
-                  segment={selectedSegment}
-                  favoriteSegments={favoriteSegments}
-                  onToggleFavorite={handleToggleFavorite}
-                  onClose={() => setSelectedSegment(null)}
-                  isFullscreen={isDetailPanelFullscreen}
-                />
+                <div className="w-full max-w-[1200px]">
+                  <DetailPanel
+                    segment={selectedSegment}
+                    favoriteSegments={favoriteSegments}
+                    onToggleFavorite={handleToggleFavorite}
+                    onClose={() => setSelectedSegment(null)}
+                    isFullscreen={isDetailPanelFullscreen}
+                  />
+                </div>
               </div>
             </div>
           </>

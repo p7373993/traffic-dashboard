@@ -53,7 +53,7 @@ export const DetailPanel = memo<DetailPanelProps>(
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
+          className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100 transition-colors z-10"
           aria-label="close"
           title="Close panel"
         >
@@ -61,7 +61,7 @@ export const DetailPanel = memo<DetailPanelProps>(
         </button>
 
         {/* Header with title and favorite button */}
-        <div className="flex justify-between items-start mb-1 pr-12 pl-12">
+        <div className="flex justify-between items-start mb-1 mt-6">
           <h2 className={`font-bold ${isFullscreen ? "text-3xl" : "text-2xl"}`}>
             {segment.name}
           </h2>
@@ -78,9 +78,9 @@ export const DetailPanel = memo<DetailPanelProps>(
           </button>
         </div>
 
-        <div className={`${isFullscreen ? "max-w-[1200px] mx-auto" : ""}`}>
+        <div>
           <p
-            className={`text-gray-500 mb-4 pl-12 ${
+            className={`text-gray-500 mb-4 ${
               isFullscreen ? "text-base" : "text-sm"
             }`}
           >
@@ -88,9 +88,9 @@ export const DetailPanel = memo<DetailPanelProps>(
           </p>
 
           {/* Divider line */}
-          <hr className="border-gray-200 mb-4 ml-12" />
+          <hr className="border-gray-200 mb-4" />
 
-          <div className={`ml-12 ${isFullscreen ? "max-w-6xl" : ""}`}>
+          <div>
             <div
               className={`grid gap-4 mb-6 text-center ${
                 isFullscreen ? "grid-cols-4" : "grid-cols-2"

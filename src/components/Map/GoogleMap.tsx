@@ -7,6 +7,7 @@ import {
   DEFAULT_ZOOM,
 } from "../../utils/constants";
 import { roadSegments } from "../../data/roadSegments";
+import { getTrafficIntersections, TrafficIntersection } from "../../api/traffic";
 
 interface GoogleMapProps {
   selectedSegment: RoadSegment | null;
@@ -28,6 +29,22 @@ export const GoogleMap = memo<GoogleMapProps>(
     const markersRef = useRef<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string>("");
+    const [intersections, setIntersections] = useState<TrafficIntersection[]>([]);
+
+    // 교차로 데이터 가져오기
+    useEffect(() => {
+      const fetchIntersections = async () => {
+        try {
+          const data = await getTrafficIntersections();
+          console.log('지도에 표시할 교차로 데이터:', data); // 데이터 확인을 위한 로그
+          setIntersections(data);
+        } catch (error) {
+          console.error('교차로 데이터를 가져오는데 실패했습니다:', error);
+        }
+      };
+
+      fetchIntersections();
+    }, []);
 
     const initializeMap = useCallback(() => {
       if (!mapRef.current || !window.google) {
@@ -62,22 +79,40 @@ export const GoogleMap = memo<GoogleMapProps>(
             strokeOpacity: 0.8,
             strokeWeight: 6,
             clickable: true,
-            map: map, // 직접 map 설정
+            map: map,
           });
 
           polylinesRef.current.set(segment.id, polyline);
 
-          // 클릭 이벤트
           polyline.addListener("click", () => {
             onSegmentClick(segment);
           });
         });
 
-        // 간단한 테스트 마커 추가
-        new window.google.maps.Marker({
-          position: LIMA_CENTER,
-          map: map,
-          title: "Lima Center",
+        // 교차로 마커 추가
+        console.log('마커를 추가할 교차로 데이터:', intersections); // 마커 추가 전 데이터 확인
+        intersections.forEach((intersection) => {
+          const marker = new window.google.maps.Marker({
+            position: { lat: intersection.latitude, lng: intersection.longitude },
+            map: map,
+            title: intersection.name,
+          });
+
+          // 인포윈도우 생성
+          const infoWindow = new window.google.maps.InfoWindow({
+            content: `
+              <div>
+                <h3>${intersection.name}</h3>
+              </div>
+            `,
+          });
+
+          // 마커 클릭 이벤트
+          marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+          });
+
+          markersRef.current.push(marker);
         });
 
         setIsLoading(false);
@@ -87,7 +122,7 @@ export const GoogleMap = memo<GoogleMapProps>(
         setError("지도를 초기화하는 중 오류가 발생했습니다.");
         setIsLoading(false);
       }
-    }, [onSegmentClick]);
+    }, [onSegmentClick, intersections]);
 
     useEffect(() => {
       // Google Maps 스크립트가 이미 로드되었는지 확인

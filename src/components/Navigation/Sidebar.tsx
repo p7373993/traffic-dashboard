@@ -177,9 +177,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <h4 className="font-bold text-sm text-gray-800">
                         {segment.name}
                       </h4>
-                      <span className="text-xs text-gray-500">
-                        {segment.area}
-                      </span>
                       <button
                         style={{
                           display: "inline-flex",
