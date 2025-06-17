@@ -23,6 +23,13 @@ export type TrafficData = {
   volume: number;
 };
 
+export type IntersectionTrafficData = {
+  intersection_id: number;
+  timestamp: string;  // 15분 단위 시간
+  average_speed: number;
+  total_volume: number;
+};
+
 export type Accident = {
   id: number;
   segmentId: number;
