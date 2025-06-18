@@ -48,7 +48,7 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({
     >
       {intersections.map((intersection) => (
         <Marker
-          key={intersection.id}
+          key={`intersection-${intersection.id}`}
           position={{
             lat: intersection.latitude,
             lng: intersection.longitude,
@@ -59,14 +59,14 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({
           }}
           icon={{
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 8,
+            scale: 6,
             fillColor:
               selectedIntersection?.id === intersection.id
                 ? "#3b82f6"
                 : "#10b981",
             fillOpacity: 1,
             strokeColor: "#ffffff",
-            strokeWeight: 2,
+            strokeWeight: 1.5,
           }}
         />
       ))}
@@ -79,16 +79,56 @@ export const GoogleMap: React.FC<GoogleMapProps> = ({
           }}
           onCloseClick={() => setSelectedMarker(null)}
         >
-          <div className="p-2">
-            <h3 className="font-semibold text-gray-800">
+          <div className="p-2 min-w-[200px] -mt-2">
+            <h3
+              className="font-bold -mb-1"
+              style={{
+                color: "#131416",
+                fontSize: "17px",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "150%",
+                letterSpacing: "0px",
+              }}
+            >
               {selectedMarker.name}
             </h3>
-            <p className="text-sm text-gray-600">
-              Average Speed: {selectedMarker.average_speed || "N/A"} km/h
-            </p>
-            <p className="text-sm text-gray-600">
-              Total Volume: {selectedMarker.total_volume || "N/A"}
-            </p>
+            <div className="space-y-1 mt-3 mb-3">
+              <p
+                className="text-[#939393]"
+                style={{
+                  WebkitTextStrokeWidth: "1px",
+                  WebkitTextStrokeColor: "rgba(0, 0, 0, 0.00)",
+                  fontSize: "15px",
+                  fontStyle: "normal",
+                  fontWeight: 400,
+                  lineHeight: "150%",
+                  letterSpacing: "0px",
+                }}
+              >
+                speed: {selectedMarker.average_speed || "N/A"}
+              </p>
+              <p
+                className="text-[#939393]"
+                style={{
+                  WebkitTextStrokeWidth: "1px",
+                  WebkitTextStrokeColor: "rgba(0, 0, 0, 0.00)",
+                  fontSize: "15px",
+                  fontStyle: "normal",
+                  fontWeight: 400,
+                  lineHeight: "150%",
+                  letterSpacing: "0px",
+                }}
+              >
+                volume: {selectedMarker.total_volume || "N/A"}
+              </p>
+            </div>
+            <button
+              onClick={() => onIntersectionClick(selectedMarker)}
+              className="text-xs text-gray-600 hover:text-gray-800 flex items-center ml-auto"
+            >
+              View details <span className="ml-1">›</span>
+            </button>
           </div>
         </InfoWindow>
       )}

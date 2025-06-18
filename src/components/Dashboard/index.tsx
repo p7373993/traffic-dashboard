@@ -170,7 +170,7 @@ export default function Dashboard() {
             {isDetailPanelFullscreen && (
               <button
                 onClick={() => setIsDetailPanelFullscreen(false)}
-                className="fixed left-4 top-1/2 transform -translate-y-1/2 z-[70] flex items-center justify-center p-0 transition-all"
+                className="fixed left-4 top-1/2 transform -translate-y-1/2 z-[70] flex items-center justify-center p-0 transition-all duration-300 ease-in-out hover:bg-gray-100"
                 aria-label="Exit fullscreen"
                 title="Minimize"
                 style={{
@@ -186,14 +186,17 @@ export default function Dashboard() {
                   boxShadow: "0 4px 24px 0 rgba(0,0,0,0.10)",
                 }}
               >
-                <ChevronRight size={20} className="text-gray-400 mx-auto" />
+                <ChevronRight
+                  size={20}
+                  className="text-gray-400 mx-auto transition-transform duration-300 hover:translate-x-1"
+                />
               </button>
             )}
             {/* Maximize button: only visible on the right of detail panel when not maximized */}
             {!isDetailPanelFullscreen && (
               <button
                 onClick={() => setIsDetailPanelFullscreen(true)}
-                className="fixed top-1/2 transform -translate-y-1/2 z-[70] flex items-center justify-center p-0 transition-all duration-300 translate-x-0 opacity-100 pointer-events-auto"
+                className="fixed top-1/2 transform -translate-y-1/2 z-[70] flex items-center justify-center p-0 transition-all duration-300 ease-in-out hover:bg-gray-100"
                 aria-label="Enter fullscreen"
                 title="Maximize"
                 style={{
@@ -209,15 +212,14 @@ export default function Dashboard() {
                   boxShadow: "0 4px 24px 0 rgba(0,0,0,0.10)",
                 }}
               >
-                <ChevronLeft size={20} className="text-gray-400 mx-auto" />
+                <ChevronLeft
+                  size={20}
+                  className="text-gray-400 mx-auto transition-transform duration-300 hover:-translate-x-1"
+                />
               </button>
             )}
             <div
-              className={`fixed top-0 h-full z-50 ${
-                isDetailPanelFullscreen
-                  ? "left-0 w-screen"
-                  : "right-0 w-[min(823px,90vw)]"
-              }`}
+              className={`fixed top-0 h-full z-50 transition-all duration-300 ease-in-out`}
               style={{
                 background: isDetailPanelFullscreen
                   ? "white"
@@ -229,6 +231,13 @@ export default function Dashboard() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
+                width: isDetailPanelFullscreen ? "100vw" : "min(823px, 90vw)",
+                transform: isDetailPanelFullscreen
+                  ? "translateX(0)"
+                  : "translateX(calc(100% - min(823px, 90vw)))",
+                right: 0,
+                transition:
+                  "transform 300ms ease-in-out, width 300ms ease-in-out",
               }}
             >
               <div
