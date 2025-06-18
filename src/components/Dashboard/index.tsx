@@ -3,15 +3,17 @@ import { NavBar } from "../Navigation/NavBar";
 import { Sidebar } from "../Navigation/Sidebar";
 import { GoogleMap } from "../Map/GoogleMap";
 import { DetailPanel } from "../TrafficAnalysis/DetailPanel";
-import { Intersection } from "../../types/global.types";
+import { Intersection, Incident } from "../../types/global.types";
 import { Map as MapIcon, Star, ChevronRight, ChevronLeft } from "lucide-react";
-import { getTrafficIntersections } from "../../api/traffic";
+import { getTrafficIntersections } from "../../api/intersections";
+import { getIncidents } from "../../api/incidents";
 import "./Dashboard.styles.css";
 
 export default function Dashboard() {
   const [selectedIntersection, setSelectedIntersection] =
     useState<Intersection | null>(null);
   const [intersections, setIntersections] = useState<Intersection[]>([]);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [activeNav, setActiveNav] = useState("map");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +39,30 @@ export default function Dashboard() {
     };
 
     loadIntersections();
+  }, []);
+
+  // 사고 데이터 로드
+  useEffect(() => {
+    let mounted = true;
+
+    const loadIncidents = async () => {
+      try {
+        const data = await getIncidents();
+        if (mounted) {
+          console.log("Loaded incidents:", data);
+          setIncidents(data);
+        }
+      } catch (error) {
+        if (mounted) {
+          console.error("Failed to load incident data:", error);
+        }
+      }
+    };
+
+    loadIncidents();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // 로컬 스토리지에서 즐겨찾기 불러오기 (초기화 시)

@@ -13,32 +13,32 @@ export type Intersection = {
   datetime: string;
 };
 
-export type RoadSegment = {
-  id: number;
-  name: string;
-  length: number;
-  area: string;
-  coordinates: Coordinates[];
-  bounds?: {
-    north: number;
-    south: number;
-    east: number;
-    west: number;
-  };
-};
-
 export type TrafficData = {
   hour: string;
   speed: number;
   volume: number;
 };
 
-export type Accident = {
+export type Incident = {
   id: number;
-  segmentId: number;
-  date: string;
-  time: string;
-  severity: string;
+  incident_number: number;
+  ticket_number: number;
+  incident_type: string;
+  incident_detail_type: string;
+  location_name: string;
+  district: string;
+  managed_by: string;
+  assigned_to: string;
   description: string;
-  location: Coordinates;
+  operator: string;
+  status: string;
+  registered_at: string;
+  last_status_update: string;
+  day: number;
+  month: number;
+  year: number;
+  intersection: number;
+  intersection_name: string;
+  latitude: number;
+  longitude: number;
 };

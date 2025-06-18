@@ -192,22 +192,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     className="p-4 cursor-pointer"
                     onClick={() => onIntersectionClick(intersection)}
                   >
-                    {/* Info Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Latitude</p>
-                        <p className="text-sm font-medium text-gray-700">
-                          {intersection.latitude.toFixed(6)}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Longitude</p>
-                        <p className="text-sm font-medium text-gray-700">
-                          {intersection.longitude.toFixed(6)}
-                        </p>
-                      </div>
-                    </div>
-
                     {/* Rectangle Box */}
                     <div className="mt-4">
                       <div className="w-full h-16 rounded-lg bg-gray-100" />
