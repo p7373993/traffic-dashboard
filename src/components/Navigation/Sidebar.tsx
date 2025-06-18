@@ -1,34 +1,33 @@
 import React, { useState } from "react";
 import { Search, Star } from "lucide-react";
-import { RoadSegment } from "../../types/global.types";
+import { Intersection } from "../../types/global.types";
 import { DateTimePicker } from "../common/DateTimePicker";
 import { MiniChart } from "../TrafficAnalysis/MiniChart";
-import { generateTrafficData } from "../../utils/trafficDataGenerator";
 import CalendarModal from "../common/CalendarModal";
 
 interface SidebarProps {
-  selectedSegment: RoadSegment | null;
-  onSegmentClick: (segment: RoadSegment) => void;
+  selectedIntersection: Intersection | null;
+  onIntersectionClick: (intersection: Intersection) => void;
   currentDate: Date;
   setCurrentDate: (date: Date) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  roadSegments: RoadSegment[];
+  intersections: Intersection[];
   activeNav: string;
-  favoriteSegments: number[];
-  onToggleFavorite: (segmentId: number) => void;
+  favoriteIntersections: number[];
+  onToggleFavorite: (intersectionId: number) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  selectedSegment,
-  onSegmentClick,
+  selectedIntersection,
+  onIntersectionClick,
   currentDate,
   setCurrentDate,
   searchTerm,
   setSearchTerm,
-  roadSegments,
+  intersections,
   activeNav,
-  favoriteSegments,
+  favoriteIntersections,
   onToggleFavorite,
 }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -50,26 +49,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setIsCalendarOpen(false);
   };
 
-  // 즐겨찾기 모드에 따른 세그먼트 필터링
-  const getFilteredSegments = () => {
-    let segments = roadSegments;
+  // 즐겨찾기 모드에 따른 교차로 필터링
+  const getFilteredIntersections = () => {
+    let points = intersections;
 
-    // 즐겨찾기 모드일 때는 즐겨찾기된 세그먼트만 표시
+    // 즐겨찾기 모드일 때는 즐겨찾기된 교차로만 표시
     if (activeNav === "favorites") {
-      segments = roadSegments.filter((segment) =>
-        favoriteSegments.includes(segment.id)
+      points = intersections.filter((intersection) =>
+        favoriteIntersections.includes(intersection.id)
       );
     }
 
     // 검색어 필터링
-    return segments.filter(
-      (segment) =>
-        segment.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        segment.area.toLowerCase().includes(searchTerm.toLowerCase())
+    return points.filter((intersection) =>
+      intersection.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
-  const filteredSegments = getFilteredSegments();
+  const filteredIntersections = getFilteredIntersections();
 
   // 헤더 제목 결정
   const getHeaderTitle = () => {
@@ -128,18 +125,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-2">
           <h3 className="text-sm font-bold text-gray-500 px-2">
             {getHeaderTitle()}
           </h3>
           {activeNav === "favorites" && (
             <span className="text-xs text-gray-400 px-2">
-              {filteredSegments.length} items
+              {filteredIntersections.length} items
             </span>
           )}
         </div>
 
-        {filteredSegments.length === 0 ? (
+        {filteredIntersections.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             {activeNav === "favorites" ? (
               <div>
@@ -150,68 +147,76 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </p>
               </div>
             ) : (
-              <p className="text-sm">No roads found</p>
+              <p className="text-sm">No intersections found</p>
             )}
           </div>
         ) : (
-          filteredSegments.map((segment) => {
-            const trafficData = generateTrafficData(segment.id);
-            const isSelected = selectedSegment?.id === segment.id;
-            const isFavorited = favoriteSegments.includes(segment.id);
+          <div className="space-y-3">
+            {filteredIntersections.map((intersection) => {
+              const isSelected = selectedIntersection?.id === intersection.id;
 
-            return (
-              <div
-                key={segment.id}
-                className={`p-4 rounded-lg border-2 shadow-sm transition-all ${
-                  isSelected
-                    ? "border-blue-500 bg-white"
-                    : "border-transparent bg-white hover:border-blue-400"
-                }`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div
-                    onClick={() => onSegmentClick(segment)}
-                    className="flex-1 cursor-pointer"
-                  >
+              return (
+                <div
+                  key={intersection.id}
+                  className={`bg-white rounded-lg border-2 transition-all ${
+                    isSelected
+                      ? "border-blue-500"
+                      : "border-transparent hover:border-blue-400"
+                  }`}
+                >
+                  {/* Header Section */}
+                  <div className="p-4 border-b border-gray-100">
                     <div className="flex justify-between items-center">
                       <h4 className="font-bold text-sm text-gray-800">
-                        {segment.name}
+                        {intersection.name}
                       </h4>
                       <button
                         style={{
-                          display: "inline-flex",
-                          padding: "4px 14px",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flexShrink: 0,
                           borderRadius: "11px",
                           border: "1px solid rgba(0,0,0,0.09)",
                           background: "rgba(236,236,236,0.51)",
                           color: "#939393",
                           fontWeight: 500,
                           fontSize: "12px",
+                          padding: "4px 14px",
+                          flexShrink: 0,
                         }}
                       >
                         View Details
                       </button>
                     </div>
                   </div>
+
+                  {/* Content Section */}
+                  <div
+                    className="p-4 cursor-pointer"
+                    onClick={() => onIntersectionClick(intersection)}
+                  >
+                    {/* Info Grid */}
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Latitude</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {intersection.latitude.toFixed(6)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Longitude</p>
+                        <p className="text-sm font-medium text-gray-700">
+                          {intersection.longitude.toFixed(6)}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Rectangle Box */}
+                    <div className="mt-4">
+                      <div className="w-full h-16 rounded-lg bg-gray-100" />
+                    </div>
+                  </div>
                 </div>
-                <div
-                  onClick={() => onSegmentClick(segment)}
-                  className="cursor-pointer"
-                >
-                  {/* Divider line */}
-                  <hr className="border-gray-200 mb-4" />
-                  <MiniChart
-                    data={trafficData}
-                    dataKey="volume"
-                    color={isSelected ? "#3b82f6" : "#10b981"}
-                  />
-                </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </div>
       <CalendarModal

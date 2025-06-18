@@ -3,49 +3,71 @@ import { NavBar } from "../Navigation/NavBar";
 import { Sidebar } from "../Navigation/Sidebar";
 import { GoogleMap } from "../Map/GoogleMap";
 import { DetailPanel } from "../TrafficAnalysis/DetailPanel";
-import { roadSegments } from "../../data/roadSegments";
-import { RoadSegment } from "../../types/global.types";
+import { Intersection } from "../../types/global.types";
 import { Map as MapIcon, Star, ChevronRight, ChevronLeft } from "lucide-react";
+import { getTrafficIntersections } from "../../api/traffic";
 import "./Dashboard.styles.css";
 
 export default function Dashboard() {
-  const [selectedSegment, setSelectedSegment] = useState<RoadSegment | null>(
-    roadSegments[0]
-  );
+  const [selectedIntersection, setSelectedIntersection] =
+    useState<Intersection | null>(null);
+  const [intersections, setIntersections] = useState<Intersection[]>([]);
   const [activeNav, setActiveNav] = useState("map");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
-  const [favoriteSegments, setFavoriteSegments] = useState<number[]>([]);
+  const [favoriteIntersections, setFavoriteIntersections] = useState<number[]>(
+    []
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 교차로 데이터 로드
+  useEffect(() => {
+    const loadIntersections = async () => {
+      try {
+        const data = await getTrafficIntersections();
+        setIntersections(data);
+        if (data.length > 0) {
+          setSelectedIntersection(data[0]);
+        }
+      } catch (error) {
+        console.error("교차로 데이터 로드 실패:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadIntersections();
+  }, []);
 
   // 로컬 스토리지에서 즐겨찾기 불러오기 (초기화 시)
   useEffect(() => {
-    const savedFavorites = localStorage.getItem("favoriteRoadSegments");
+    const savedFavorites = localStorage.getItem("favoriteIntersections");
     if (savedFavorites) {
-      setFavoriteSegments(JSON.parse(savedFavorites));
+      setFavoriteIntersections(JSON.parse(savedFavorites));
     }
   }, []);
 
   // 즐겨찾기 변경 시 로컬 스토리지에 저장
   useEffect(() => {
     localStorage.setItem(
-      "favoriteRoadSegments",
-      JSON.stringify(favoriteSegments)
+      "favoriteIntersections",
+      JSON.stringify(favoriteIntersections)
     );
-  }, [favoriteSegments]);
+  }, [favoriteIntersections]);
 
   // 즐겨찾기 토글 함수
-  const handleToggleFavorite = useCallback((segmentId: number) => {
-    setFavoriteSegments((prev) => {
-      if (prev.includes(segmentId)) {
-        return prev.filter((id) => id !== segmentId);
+  const handleToggleFavorite = useCallback((intersectionId: number) => {
+    setFavoriteIntersections((prev) => {
+      if (prev.includes(intersectionId)) {
+        return prev.filter((id) => id !== intersectionId);
       } else {
-        return [...prev, segmentId];
+        return [...prev, intersectionId];
       }
     });
   }, []);
 
-  const handleSegmentClick = useCallback((segment: RoadSegment) => {
-    setSelectedSegment(segment);
+  const handleIntersectionClick = useCallback((intersection: Intersection) => {
+    setSelectedIntersection(intersection);
   }, []);
 
   // 네비게이션 변경 시 검색어 초기화
@@ -55,19 +77,28 @@ export default function Dashboard() {
   }, []);
 
   const [isDetailPanelFullscreen, setIsDetailPanelFullscreen] = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <p className="text-gray-500">Loading data...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen w-full bg-gray-100 flex font-sans text-gray-800">
       <NavBar activeNav={activeNav} setActiveNav={handleNavChange} />
       <Sidebar
-        selectedSegment={selectedSegment}
-        onSegmentClick={handleSegmentClick}
+        selectedIntersection={selectedIntersection}
+        onIntersectionClick={handleIntersectionClick}
         currentDate={currentDate}
         setCurrentDate={setCurrentDate}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        roadSegments={roadSegments}
+        intersections={intersections}
         activeNav={activeNav}
-        favoriteSegments={favoriteSegments}
+        favoriteIntersections={favoriteIntersections}
         onToggleFavorite={handleToggleFavorite}
       />
       <main className="flex-1 relative bg-gray-100">
@@ -75,31 +106,29 @@ export default function Dashboard() {
           <>
             <div className="absolute inset-0">
               <GoogleMap
-                selectedSegment={selectedSegment}
-                onSegmentClick={handleSegmentClick}
+                selectedIntersection={selectedIntersection}
+                onIntersectionClick={handleIntersectionClick}
+                intersections={intersections}
               />
             </div>
-            {activeNav === "favorites" && !selectedSegment && (
+            {activeNav === "favorites" && !selectedIntersection && (
               <div className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-4 flex items-center space-x-3 z-10">
                 <Star size={24} className="text-red-500" />
                 <div className="text-sm">
                   <p className="font-semibold text-gray-700">Favorites Mode</p>
                   <p className="text-gray-600">
-                    {favoriteSegments.length > 0
-                      ? `${favoriteSegments.length} favorite${
-                          favoriteSegments.length > 1 ? "s" : ""
-                        } available in sidebar`
-                      : "No favorites selected yet"}
+                    {favoriteIntersections.length > 0
+                      ? `${favoriteIntersections.length} favorite intersections`
+                      : "No favorite intersections yet"}
                   </p>
                 </div>
               </div>
             )}
-            {activeNav === "map" && !selectedSegment && (
+            {activeNav === "map" && !selectedIntersection && (
               <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-4 flex items-center space-x-3">
                 <MapIcon size={24} className="text-blue-500" />
                 <p className="text-sm text-gray-700">
-                  Click a road section on the map or select it from the list on
-                  the left
+                  Click an intersection on the map or select from the list
                 </p>
               </div>
             )}
@@ -109,15 +138,15 @@ export default function Dashboard() {
             <p className="text-gray-500">Other navigation content</p>
           </div>
         )}
-        {selectedSegment && (
+        {selectedIntersection && (
           <>
-            {/* 최소화 버튼: 최대화 상태일 때만 왼쪽에 고정 */}
+            {/* Minimize button: only fixed on the left when maximized */}
             {isDetailPanelFullscreen && (
               <button
                 onClick={() => setIsDetailPanelFullscreen(false)}
                 className="fixed left-4 top-1/2 transform -translate-y-1/2 z-[70] flex items-center justify-center p-0 transition-all"
                 aria-label="Exit fullscreen"
-                title="축소"
+                title="Minimize"
                 style={{
                   borderRadius: "0px 10px 10px 0px",
                   borderTop: "1px solid #DEDFE5",
@@ -134,13 +163,13 @@ export default function Dashboard() {
                 <ChevronRight size={20} className="text-gray-400 mx-auto" />
               </button>
             )}
-            {/* 최대화 버튼: 최대화 아닐 때만 detail panel 오른쪽에 보이게 */}
+            {/* Maximize button: only visible on the right of detail panel when not maximized */}
             {!isDetailPanelFullscreen && (
               <button
                 onClick={() => setIsDetailPanelFullscreen(true)}
                 className="fixed top-1/2 transform -translate-y-1/2 z-[70] flex items-center justify-center p-0 transition-all duration-300 translate-x-0 opacity-100 pointer-events-auto"
                 aria-label="Enter fullscreen"
-                title="maximize"
+                title="Maximize"
                 style={{
                   right: "calc(min(823px, 90vw))",
                   borderRadius: "10px 0px 0px 10px",
@@ -164,7 +193,9 @@ export default function Dashboard() {
                   : "right-0 w-[min(823px,90vw)]"
               }`}
               style={{
-                background: isDetailPanelFullscreen ? "white" : "rgba(255, 255, 255, 0.90)",
+                background: isDetailPanelFullscreen
+                  ? "white"
+                  : "rgba(255, 255, 255, 0.90)",
                 boxShadow: "0px 4px 12.8px 0px rgba(0, 0, 0, 0.30)",
                 backdropFilter: "blur(5px)",
                 borderRight: "1px solid #ECECEC",
@@ -180,10 +211,10 @@ export default function Dashboard() {
               >
                 <div className="w-full max-w-[1200px]">
                   <DetailPanel
-                    segment={selectedSegment}
-                    favoriteSegments={favoriteSegments}
+                    intersection={selectedIntersection}
+                    favoriteIntersections={favoriteIntersections}
                     onToggleFavorite={handleToggleFavorite}
-                    onClose={() => setSelectedSegment(null)}
+                    onClose={() => setSelectedIntersection(null)}
                     isFullscreen={isDetailPanelFullscreen}
                   />
                 </div>

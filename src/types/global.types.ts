@@ -3,6 +3,16 @@ export type Coordinates = {
   lng: number;
 };
 
+export type Intersection = {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  total_volume: number;
+  average_speed: number;
+  datetime: string;
+};
+
 export type RoadSegment = {
   id: number;
   name: string;
